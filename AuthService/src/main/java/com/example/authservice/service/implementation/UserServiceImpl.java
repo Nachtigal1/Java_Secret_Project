@@ -1,7 +1,10 @@
 package com.example.authservice.service.implementation;
 
+import com.example.authservice.dto.TokenResponse;
+import com.example.authservice.dto.UserLoginDTO;
 import com.example.authservice.dto.UserRegistrationDTO;
 import com.example.authservice.dto.UserResponseDTO;
+import com.example.authservice.exception.UserNotFoundException;
 import com.example.authservice.model.User;
 import com.example.authservice.repository.UserRepository;
 import com.example.authservice.service.UserService;
@@ -15,6 +18,7 @@ public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final JwtUtil jwtUtil;
 
     @Override
     public UserResponseDTO register(UserRegistrationDTO registrationDTO) {
@@ -27,5 +31,18 @@ public class UserServiceImpl implements UserService {
         userRepository.save(user);
 
         return new UserResponseDTO(user.getUsername(), user.getPasswordHash(), user.getRole().toString());
+    }
+
+    @Override
+    public TokenResponse login(UserLoginDTO loginDTO) {
+        User user = userRepository.findByUsername(loginDTO.getUsername()).orElseThrow(
+                () -> new UserNotFoundException("User with username \"" + loginDTO.getUsername() + "\" not found")
+        );
+
+        if (!passwordEncoder.matches(loginDTO.getPassword(), user.getPasswordHash())) {
+            throw new RuntimeException("Invalid credentials");
+        }
+
+        return new TokenResponse(jwtUtil.generateToken(user.getUsername()));
     }
 }

@@ -7,3 +7,8 @@ spring:
   jpa:
     hibernate:
       ddl-auto: ${SPRING_JPA_HIBERNATE_DDL-AUTO:create}
+server:
+  port: 8081
+
+jwt:
+  secret: 804e6e97692a6de181f9ca67f3525378

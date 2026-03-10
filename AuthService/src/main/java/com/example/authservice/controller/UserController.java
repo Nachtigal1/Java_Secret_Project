@@ -1,5 +1,7 @@
 package com.example.authservice.controller;
 
+import com.example.authservice.dto.TokenResponse;
+import com.example.authservice.dto.UserLoginDTO;
 import com.example.authservice.dto.UserRegistrationDTO;
 import com.example.authservice.dto.UserResponseDTO;
 import com.example.authservice.service.implementation.UserServiceImpl;
@@ -23,5 +25,12 @@ public class UserController {
             @RequestBody UserRegistrationDTO userRegistrationDTO
     ) {
         return ResponseEntity.status(HttpStatus.CREATED).body(userService.register(userRegistrationDTO));
+    }
+
+    @PostMapping("/login")
+    public ResponseEntity<TokenResponse> loginUser (
+            @RequestBody UserLoginDTO userLoginDTO
+    ) {
+        return ResponseEntity.status(HttpStatus.OK).body(userService.login(userLoginDTO));
     }
 }
