@@ -22,9 +22,10 @@ public class UserServiceImpl implements UserService {
 
         user.setUsername(registrationDTO.getUsername());
         user.setPasswordHash(passwordEncoder.encode(registrationDTO.getPassword()));
+        user.setRole(User.UserRole.USER);
 
         userRepository.save(user);
 
-        return new UserResponseDTO(user.getUsername(), user.getPasswordHash());
+        return new UserResponseDTO(user.getUsername(), user.getPasswordHash(), user.getRole().toString());
     }
 }

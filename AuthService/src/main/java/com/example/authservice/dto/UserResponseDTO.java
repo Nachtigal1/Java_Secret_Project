@@ -12,4 +12,6 @@ public class UserResponseDTO {
     private String username;
 
     private String passwordHash;
+
+    private String userRole;
 }
