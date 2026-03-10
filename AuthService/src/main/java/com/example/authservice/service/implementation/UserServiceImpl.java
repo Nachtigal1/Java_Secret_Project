@@ -1,9 +1,7 @@
 package com.example.authservice.service.implementation;
 
-import com.example.authservice.dto.TokenResponse;
-import com.example.authservice.dto.UserLoginDTO;
-import com.example.authservice.dto.UserRegistrationDTO;
-import com.example.authservice.dto.UserResponseDTO;
+import com.example.authservice.dto.*;
+import com.example.authservice.exception.UserAlreadyExistsException;
 import com.example.authservice.exception.UserNotFoundException;
 import com.example.authservice.model.User;
 import com.example.authservice.repository.UserRepository;
@@ -22,6 +20,10 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserResponseDTO register(UserRegistrationDTO registrationDTO) {
+        if (userRepository.findByUsername(registrationDTO.getUsername()).isPresent()) {
+            throw new UserAlreadyExistsException("Username already exists");
+        }
+
         User user = new User();
 
         user.setUsername(registrationDTO.getUsername());
@@ -36,7 +38,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public TokenResponse login(UserLoginDTO loginDTO) {
         User user = userRepository.findByUsername(loginDTO.getUsername()).orElseThrow(
-                () -> new UserNotFoundException("User with username \"" + loginDTO.getUsername() + "\" not found")
+                () -> new UserNotFoundException("User with username " + loginDTO.getUsername() + " not found")
         );
 
         if (!passwordEncoder.matches(loginDTO.getPassword(), user.getPasswordHash())) {
