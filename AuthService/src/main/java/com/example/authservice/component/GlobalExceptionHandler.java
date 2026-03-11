@@ -1,14 +1,12 @@
 package com.example.authservice.component;
 
 import com.example.authservice.dto.ExceptionResponse;
-import com.example.authservice.exception.UserAlreadyExistsException;
-import com.example.authservice.exception.UserNotFoundException;
+import com.example.authservice.exception.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
 
@@ -42,9 +40,9 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ExceptionResponse> handleGenericException(Exception ex) {
-        log.error("Unhandled exception occurred", ex);
+        log.error("Unhandled exception occurred: {}", ex.getMessage());
         return buildExceptionResponse(
-                new RuntimeException("Внутрішня помилка сервера"),
+                ex,
                 HttpStatus.INTERNAL_SERVER_ERROR
         );
     }
