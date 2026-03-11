@@ -1,13 +1,12 @@
 package com.example.productservice.service.implementation;
 
-import com.example.productservice.dto.ProductCreateDTO;
-import com.example.productservice.dto.ProductResponseDTO;
-import com.example.productservice.exception.ProductAlreadyExistsException;
-import com.example.productservice.exception.ProductNotFoundException;
+import com.example.productservice.dto.*;
+import com.example.productservice.exception.*;
 import com.example.productservice.model.Product;
 import com.example.productservice.repository.ProductRepository;
 import com.example.productservice.service.ProductService;
 import lombok.RequiredArgsConstructor;
+import org.hibernate.validator.internal.metadata.aggregated.rule.VoidMethodsMustNotBeReturnValueConstrained;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
