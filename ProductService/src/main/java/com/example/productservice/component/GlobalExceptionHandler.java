@@ -16,7 +16,8 @@ import java.time.LocalDateTime;
 public class GlobalExceptionHandler {
 
     @ExceptionHandler({
-            ProductNotFoundException.class
+            ProductNotFoundException.class,
+            CategoryNotFoundException.class
     })
     public ResponseEntity<ExceptionResponse> handleNotFoundExceptions(RuntimeException ex) {
         log.warn("Not found exception: {}", ex.getMessage());
@@ -32,7 +33,8 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler({
-            ProductAlreadyExistsException.class
+            ProductAlreadyExistsException.class,
+            CategoryAlreadyExistsException.class
     })
     public ResponseEntity<ExceptionResponse> handleAlreadyExistsExceptions(RuntimeException ex) {
         log.warn("Already exists exception: {}", ex.getMessage());

@@ -3,11 +3,13 @@ package com.example.productservice.service.implementation;
 import com.example.productservice.dto.*;
 import com.example.productservice.exception.*;
 import com.example.productservice.model.Product;
+import com.example.productservice.repository.CategoryRepository;
 import com.example.productservice.repository.ProductRepository;
 import com.example.productservice.service.ProductService;
+import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
-import org.hibernate.validator.internal.metadata.aggregated.rule.VoidMethodsMustNotBeReturnValueConstrained;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,8 +19,10 @@ import java.util.List;
 public class ProductServiceImpl implements ProductService {
 
     private final ProductRepository productRepository;
+    private final CategoryRepository categoryRepository;
 
     @Override
+    @Transactional
     public ProductResponseDTO createProduct(ProductCreateDTO dto) {
         if (productRepository.existsByName(dto.getName())) {
             throw new ProductAlreadyExistsException("Product with name " + dto.getName() + " already exists");
@@ -29,17 +33,14 @@ public class ProductServiceImpl implements ProductService {
         product.setName(dto.getName());
         product.setDescription(dto.getDescription());
         product.setPrice(Double.parseDouble(dto.getPrice()));
+        product.setImage(dto.getImage());
+        product.setCategory(categoryRepository.findById(dto.getCategoryId()).orElseThrow(
+                () -> new CategoryNotFoundException("Category with id " + dto.getCategoryId() + " not found")
+        ));
 
         productRepository.save(product);
 
-        ProductResponseDTO productResponseDTO = new ProductResponseDTO();
-
-        productResponseDTO.setId(product.getId());
-        productResponseDTO.setName(product.getName());
-        productResponseDTO.setDescription(product.getDescription());
-        productResponseDTO.setPrice(product.getPrice().toString());
-
-        return  productResponseDTO;
+        return getProductResponseDTO(product);
     }
 
     @Override
@@ -48,12 +49,19 @@ public class ProductServiceImpl implements ProductService {
                 () -> new ProductNotFoundException("Product with id " + id + " not found")
         );
 
+        return getProductResponseDTO(product);
+    }
+
+    @NonNull
+    private ProductResponseDTO getProductResponseDTO(Product product) {
         ProductResponseDTO productResponseDTO = new ProductResponseDTO();
 
         productResponseDTO.setId(product.getId());
         productResponseDTO.setName(product.getName());
         productResponseDTO.setDescription(product.getDescription());
         productResponseDTO.setPrice(product.getPrice().toString());
+        productResponseDTO.setImage(product.getImage());
+        productResponseDTO.setCategoryName(product.getCategory().getName());
 
         return  productResponseDTO;
     }
@@ -67,14 +75,7 @@ public class ProductServiceImpl implements ProductService {
         List<Product> products = productRepository.findAll();
         List<ProductResponseDTO> productResponseDTOS = new ArrayList<>();
         for (Product product : products) {
-            ProductResponseDTO productResponseDTO = new ProductResponseDTO();
-
-            productResponseDTO.setId(product.getId());
-            productResponseDTO.setName(product.getName());
-            productResponseDTO.setDescription(product.getDescription());
-            productResponseDTO.setPrice(product.getPrice().toString());
-
-            productResponseDTOS.add(productResponseDTO);
+            productResponseDTOS.add(getProductResponseDTO(product));
         }
 
         return productResponseDTOS;

@@ -25,6 +25,7 @@ services:
       AUTH_SERVICE_URL: http://auth-service:8081
     depends_on:
       - auth-service
+      - product-service
 
   auth-service:
     build: ./AuthService
@@ -32,6 +33,7 @@ services:
       - "8081:8081"
     environment:
       SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/lab
+      SPRING_JPA_HIBERNATE_DDL-AUTO: create-drop
 
   product-service:
     build: ./ProductService
@@ -39,6 +41,8 @@ services:
       - "8082:8082"
     environment:
       SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/lab
+      SPRING_JPA_HIBERNATE_DDL-AUTO: create-drop
+
 
 volumes:
   postgres_data:
