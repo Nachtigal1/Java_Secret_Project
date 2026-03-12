@@ -18,4 +18,11 @@ public class User {
 
     @Column(name = "password_hash", unique = true)
     private String passwordHash;
+
+    @Enumerated(EnumType.STRING)
+    private UserRole role;
+
+    public enum UserRole{
+        USER, ADMIN
+    }
 }
