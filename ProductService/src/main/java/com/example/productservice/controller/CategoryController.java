@@ -8,7 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api/categories")
+@RequestMapping("/api/products/categories")
 @RequiredArgsConstructor
 public class CategoryController {
 
