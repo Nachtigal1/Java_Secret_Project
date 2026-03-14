@@ -17,4 +17,4 @@ jwt:
   secret: 804e6e97692a6de181f9ca67f3525378
 
 cart-service:
-  url: ${CART_SERVICE_URL:http://cart-service:8083}
+  url: ${CART_SERVICE_URL:http://localhost:8083}

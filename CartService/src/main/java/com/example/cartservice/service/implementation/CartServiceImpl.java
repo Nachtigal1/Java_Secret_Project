@@ -1,10 +1,8 @@
 package com.example.cartservice.service.implementation;
 
-import com.example.cartservice.dto.CartCreateRequest;
-import com.example.cartservice.dto.CartResponseDTO;
-import com.example.cartservice.model.Cart;
-import com.example.cartservice.model.CartItem;
-import com.example.cartservice.repository.CartRepository;
+import com.example.cartservice.dto.*;
+import com.example.cartservice.model.*;
+import com.example.cartservice.repository.*;
 import com.example.cartservice.service.CartService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -17,6 +15,7 @@ import java.util.List;
 public class CartServiceImpl implements CartService {
 
     private final CartRepository cartRepository;
+    private final CartItemRepository cartItemRepository;
 
     @Override
     public CartResponseDTO createCart(CartCreateRequest cartCreateRequest) {
@@ -37,6 +36,32 @@ public class CartServiceImpl implements CartService {
 
         cartRepository.save(cart);
 
+        return getCartResponseDTO(cart);
+    }
+
+    @Override
+    public CartResponseDTO getCart(Long userId) {
+        return null;
+    }
+
+    @Override
+    public CartResponseDTO addItem(String userId, CartItemAddRequest cartItemAddRequest) {
+        Cart cart = cartRepository.findByUserId(Long.valueOf(userId)).orElseThrow(() -> new RuntimeException("Cart not found"));
+        List<CartItem> cartItems = cart.getCartItems();
+
+        CartItem cartItem = new CartItem();
+        cartItem.setProductId(cartItemAddRequest.getProductId());
+        cartItem.setQuantity(cartItemAddRequest.getQuantity());
+        cartItem.setCart(cart);
+        cartItems.add(cartItem);
+
+        cart.setCartItems(cartItems);
+        cartRepository.save(cart);
+
+        return getCartResponseDTO(cart);
+    }
+
+    private static CartResponseDTO getCartResponseDTO(Cart cart) {
         CartResponseDTO cartResponseDTO = new CartResponseDTO();
         cartResponseDTO.setId(cart.getId());
         cartResponseDTO.setUserId(cart.getUserId());
@@ -52,12 +77,6 @@ public class CartServiceImpl implements CartService {
         }
 
         cartResponseDTO.setCartItems(cartItemResponseDTOList);
-
         return cartResponseDTO;
-    }
-
-    @Override
-    public CartResponseDTO getCart(Long userId) {
-        return null;
     }
 }

@@ -42,7 +42,7 @@ public class UserServiceImpl implements UserService {
         userRepository.save(user);
 
         restTemplate.postForObject(
-                cartServiceUrl + "/api/carts",
+                cartServiceUrl + "/internal/carts",
                 new CartCreateRequest(user.getId(), new ArrayList<>()),
                 CartCreateRequest.class
         );
@@ -60,6 +60,6 @@ public class UserServiceImpl implements UserService {
             throw new RuntimeException("Invalid credentials");
         }
 
-        return new TokenResponse(jwtUtil.generateToken(user.getUsername()));
+        return new TokenResponse(jwtUtil.generateToken(user.getId().toString()));
     }
 }
