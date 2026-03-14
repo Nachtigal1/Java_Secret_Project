@@ -9,9 +9,9 @@ import lombok.Setter;
 @AllArgsConstructor
 public class UserResponseDTO {
 
-    private String username;
+    private Long id;
 
-    private String passwordHash;
+    private String username;
 
     private String userRole;
 }

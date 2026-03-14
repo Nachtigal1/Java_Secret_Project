@@ -12,6 +12,11 @@
           <package value="com.example.productservice" />
         </packages>
       </persistence-unit>
+      <persistence-unit moduleName="CartService" name="Default">
+        <packages>
+          <package value="com.example.cartservice" />
+        </packages>
+      </persistence-unit>
     </persistence-units>
   </component>
 </project>

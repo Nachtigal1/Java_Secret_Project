@@ -19,9 +19,11 @@ services:
     environment:
       AUTH_SERVICE_URL: http://auth-service:8081
       PRODUCT_SERVICE_URL: http://product-service:8082
+      CART_SERVICE_URL: http://cart-service:8083
     depends_on:
       - auth-service
       - product-service
+      - cart-service
 
   auth-service:
     build: ./AuthService
@@ -30,6 +32,9 @@ services:
     environment:
       SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/auth_db
       SPRING_JPA_HIBERNATE_DDL_AUTO: update
+      CART_SERVICE_URL: http://cart-service:8083
+    depends_on:
+      - db
 
   product-service:
     build: ./ProductService
@@ -38,6 +43,18 @@ services:
     environment:
       SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/product_db
       SPRING_JPA_HIBERNATE_DDL_AUTO: update
+    depends_on:
+      - db
+
+  cart-service:
+    build: ./CartService
+    ports:
+      - "8083:8083"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/cart_db
+      SPRING_JPA_HIBERNATE_DDL_AUTO: update
+    depends_on:
+      - db
 
 volumes:
   postgres_data:
