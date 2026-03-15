@@ -34,6 +34,7 @@ public class ProductServiceImpl implements ProductService {
         product.setDescription(dto.getDescription());
         product.setPrice(Double.parseDouble(dto.getPrice()));
         product.setImage(dto.getImage());
+        product.setQuantity(100);
         product.setCategory(categoryRepository.findById(dto.getCategoryId()).orElseThrow(
                 () -> new CategoryNotFoundException("Category with id " + dto.getCategoryId() + " not found")
         ));
@@ -61,6 +62,7 @@ public class ProductServiceImpl implements ProductService {
         productResponseDTO.setDescription(product.getDescription());
         productResponseDTO.setPrice(product.getPrice().toString());
         productResponseDTO.setImage(product.getImage());
+        productResponseDTO.setQuantity(product.getQuantity());
         productResponseDTO.setCategoryName(product.getCategory().getName());
 
         return  productResponseDTO;
@@ -79,6 +81,19 @@ public class ProductServiceImpl implements ProductService {
         }
 
         return productResponseDTOS;
+    }
+
+    @Override
+    public Boolean existsById(Long id) {
+        return productRepository.existsById(id);
+    }
+
+    @Override
+    public Integer getQuantityById(Long id) {
+        Product product = productRepository.findById(id).orElseThrow(
+                () -> new ProductNotFoundException("Product with id " + id + " not found")
+        );
+        return product.getQuantity();
     }
 
     @Override

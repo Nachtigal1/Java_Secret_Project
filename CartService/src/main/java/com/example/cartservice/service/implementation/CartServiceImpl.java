@@ -4,18 +4,27 @@ import com.example.cartservice.dto.*;
 import com.example.cartservice.model.*;
 import com.example.cartservice.repository.*;
 import com.example.cartservice.service.CartService;
+import com.example.cartservice.exception.*;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.RestTemplate;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
 public class CartServiceImpl implements CartService {
 
     private final CartRepository cartRepository;
-    private final CartItemRepository cartItemRepository;
+    private final RestTemplate restTemplate;
+
+    @Value("${product-service.url}")
+    private String productServiceUrl;
 
     @Override
     public CartResponseDTO createCart(CartCreateRequest cartCreateRequest) {
@@ -45,17 +54,54 @@ public class CartServiceImpl implements CartService {
     }
 
     @Override
-    public CartResponseDTO addItem(String userId, CartItemAddRequest cartItemAddRequest) {
-        Cart cart = cartRepository.findByUserId(Long.valueOf(userId)).orElseThrow(() -> new RuntimeException("Cart not found"));
+    @Transactional
+    public CartResponseDTO addItem(String userId, CartItemAddRequest request) {
+
+        ProductResponseDTO product;
+
+        try {
+            product = restTemplate.getForObject(
+                    productServiceUrl + "/internal/products/" + request.getProductId(),
+                    ProductResponseDTO.class
+            );
+        } catch (HttpClientErrorException.NotFound ex) {
+            throw new ProductNotFoundException("Product not found");
+        }
+
+        Cart cart = cartRepository.findByUserId(Long.valueOf(userId))
+                .orElseThrow(() -> new CartNotFoundException("Cart not found"));
+
         List<CartItem> cartItems = cart.getCartItems();
 
-        CartItem cartItem = new CartItem();
-        cartItem.setProductId(cartItemAddRequest.getProductId());
-        cartItem.setQuantity(cartItemAddRequest.getQuantity());
-        cartItem.setCart(cart);
-        cartItems.add(cartItem);
+        Optional<CartItem> existingItem = cartItems.stream()
+                .filter(item -> item.getProductId().equals(request.getProductId()))
+                .findFirst();
 
-        cart.setCartItems(cartItems);
+        if (existingItem.isPresent()) {
+
+            CartItem item = existingItem.get();
+            int newQuantity = item.getQuantity() + request.getQuantity();
+
+            if (newQuantity > product.getQuantity()) {
+                throw new NotEnoughStockException("Not enough quantity in stock");
+            }
+
+            item.setQuantity(newQuantity);
+
+        } else {
+
+            if (request.getQuantity() > product.getQuantity()) {
+                throw new NotEnoughStockException("Not enough quantity in stock");
+            }
+
+            CartItem cartItem = new CartItem();
+            cartItem.setProductId(request.getProductId());
+            cartItem.setQuantity(request.getQuantity());
+            cartItem.setCart(cart);
+
+            cartItems.add(cartItem);
+        }
+
         cartRepository.save(cart);
 
         return getCartResponseDTO(cart);

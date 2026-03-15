@@ -53,6 +53,7 @@ services:
     environment:
       SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/cart_db
       SPRING_JPA_HIBERNATE_DDL_AUTO: update
+      PRODUCT_SERVICE_URL: http://product-service:8082
     depends_on:
       - db
 

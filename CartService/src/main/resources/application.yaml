@@ -15,3 +15,6 @@ server:
 
 jwt:
   secret: 804e6e97692a6de181f9ca67f3525378
+
+product-service:
+  url: ${PRODUCT_SERVICE_URL:http://localhost:8082}

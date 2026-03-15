@@ -3,7 +3,7 @@
   <component name="CompilerConfiguration">
     <annotationProcessing>
       <profile default="true" name="Default" enabled="true" />
-      <profile name="Annotation profile for CartService" enabled="true">
+      <profile name="Annotation profile for OrderService" enabled="true">
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
@@ -11,6 +11,7 @@
           <entry name="$MAVEN_REPOSITORY$/org/projectlombok/lombok/1.18.42/lombok-1.18.42.jar" />
         </processorPath>
         <module name="CartService" />
+        <module name="OrderService" />
         <module name="ProductService" />
         <module name="ApiGateway" />
         <module name="AuthService" />
@@ -22,6 +23,7 @@
       <module name="ApiGateway" options="-parameters" />
       <module name="AuthService" options="-parameters" />
       <module name="CartService" options="-parameters" />
+      <module name="OrderService" options="-parameters" />
       <module name="ProductService" options="-parameters" />
     </option>
   </component>
