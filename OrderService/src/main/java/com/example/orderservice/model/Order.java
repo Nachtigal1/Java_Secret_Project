@@ -3,13 +3,16 @@ package com.example.orderservice.model;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
 @Table(name = "orders")
 @Getter
 @Setter
+@ToString
 public class Order {
 
     @Id
@@ -28,7 +31,10 @@ public class Order {
     private DeliveryMethod deliveryMethod;
 
     @OneToMany(mappedBy = "order", cascade =  CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
-    private List<OrderItem> orderItems;
+    private List<OrderItem> orderItems = new ArrayList<>();
+
+    @Column(name = "total")
+    private Double total = 0.0;
 
     public enum Status {
         PENDING, SHIPPED, DELIVERED, RETURNED;

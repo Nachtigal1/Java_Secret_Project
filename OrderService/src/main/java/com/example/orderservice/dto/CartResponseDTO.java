@@ -1,17 +1,18 @@
-package com.example.cartservice.dto;
+package com.example.orderservice.dto;
 
 import lombok.Data;
 
 import java.util.List;
 
 @Data
-public class CartCreateRequest {
+public class CartResponseDTO {
 
+    private Long id;
     private Long userId;
-    private List<CartItemCreateRequest> cartItems;
+    private List<CartItemResponseDTO> cartItems;
 
     @Data
-    public static class CartItemCreateRequest {
+    public static class CartItemResponseDTO {
         private Long productId;
         private Integer quantity;
         private Double price;

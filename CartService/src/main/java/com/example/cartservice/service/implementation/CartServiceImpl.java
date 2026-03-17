@@ -36,6 +36,7 @@ public class CartServiceImpl implements CartService {
                 CartItem cartItem = new CartItem();
                 cartItem.setProductId(item.getProductId());
                 cartItem.setQuantity(item.getQuantity());
+                cartItem.setPrice(item.getPrice());
                 cartItems.add(cartItem);
             }
         }
@@ -50,7 +51,9 @@ public class CartServiceImpl implements CartService {
 
     @Override
     public CartResponseDTO getCart(Long userId) {
-        return null;
+        Cart cart = cartRepository.findByUserId(userId)
+                .orElseThrow(() -> new CartNotFoundException("Cart not found"));
+        return getCartResponseDTO(cart);
     }
 
     @Override
@@ -97,6 +100,7 @@ public class CartServiceImpl implements CartService {
             CartItem cartItem = new CartItem();
             cartItem.setProductId(request.getProductId());
             cartItem.setQuantity(request.getQuantity());
+            cartItem.setPrice(Double.valueOf(product.getPrice()));
             cartItem.setCart(cart);
 
             cartItems.add(cartItem);
@@ -104,6 +108,15 @@ public class CartServiceImpl implements CartService {
 
         cartRepository.save(cart);
 
+        return getCartResponseDTO(cart);
+    }
+
+    @Override
+    public CartResponseDTO clearCartByUserId(Long userId) {
+        Cart cart = cartRepository.findByUserId(userId)
+                .orElseThrow(() -> new CartNotFoundException("Cart not found"));
+        cart.getCartItems().clear();
+        cartRepository.save(cart);
         return getCartResponseDTO(cart);
     }
 
@@ -118,6 +131,7 @@ public class CartServiceImpl implements CartService {
                 CartResponseDTO.CartItemResponseDTO cartItemResponseDTO = new CartResponseDTO.CartItemResponseDTO();
                 cartItemResponseDTO.setProductId(item.getProductId());
                 cartItemResponseDTO.setQuantity(item.getQuantity());
+                cartItemResponseDTO.setPrice(item.getPrice());
                 cartItemResponseDTOList.add(cartItemResponseDTO);
             }
         }

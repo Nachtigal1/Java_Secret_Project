@@ -22,6 +22,11 @@ public class InternalProductController {
         return productService.getQuantityById(id);
     }
 
+    @PatchMapping("/quantity/{id}/{quantity}")
+    public ProductResponseDTO updateQuantityById(@PathVariable Long id, @PathVariable Integer quantity) {
+        return productService.updateProductQuantityById(id, quantity);
+    }
+
     @GetMapping("/{id}")
     public ProductResponseDTO getProductById(@PathVariable Long id) {
         return productService.getProductById(id);

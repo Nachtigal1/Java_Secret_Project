@@ -19,4 +19,19 @@ public class InternalCartController {
     ) {
         return ResponseEntity.status(HttpStatus.CREATED).body(cartService.createCart(cartCreateRequest));
     }
+
+    @GetMapping("/users/{userId}")
+    public ResponseEntity<CartResponseDTO> getCartByUserId (
+            @PathVariable String userId
+    ) {
+        return ResponseEntity.ok(cartService.getCart(Long.valueOf(userId)));
+    }
+
+    @DeleteMapping("/clear/{userId}")
+    public ResponseEntity<CartResponseDTO> clearCartByUserId (
+            @PathVariable String userId
+    ) {
+        cartService.clearCartByUserId(Long.valueOf(userId));
+        return ResponseEntity.noContent().build();
+    }
 }

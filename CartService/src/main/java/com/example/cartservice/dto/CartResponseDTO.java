@@ -15,5 +15,6 @@ public class CartResponseDTO {
     public static class CartItemResponseDTO {
         private Long productId;
         private Integer quantity;
+        private Double price;
     }
 }

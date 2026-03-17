@@ -16,5 +16,7 @@ public interface ProductService {
 
     Integer getQuantityById(Long id);
 
+    ProductResponseDTO updateProductQuantityById(Long id, Integer quantity);
+
     void deleteProductById (Long id);
 }
