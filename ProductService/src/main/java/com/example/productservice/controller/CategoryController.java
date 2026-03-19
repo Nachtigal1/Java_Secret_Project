@@ -20,4 +20,11 @@ public class CategoryController {
     ) {
         return ResponseEntity.status(HttpStatus.CREATED).body(categoryService.createCategory(categoryCreateRequest));
     }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<CategoryResponseDTO> getCategoryById (
+            @PathVariable Long id
+    ) {
+        return ResponseEntity.status(HttpStatus.OK).body(categoryService.getCategoryById(id));
+    }
 }

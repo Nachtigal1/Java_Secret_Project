@@ -24,4 +24,11 @@ public class CartController {
     ) {
         return ResponseEntity.status(HttpStatus.CREATED).body(cartService.addItem(userId, cartItemAddRequest));
     }
+
+    @GetMapping
+    public ResponseEntity<CartResponseDTO> getCartByUserId (
+            @RequestHeader("X-User") String userId
+    ) {
+        return ResponseEntity.status(HttpStatus.OK).body(cartService.getCart(Long.parseLong(userId)));
+    }
 }

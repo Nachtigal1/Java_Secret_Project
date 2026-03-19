@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.*;
@@ -27,6 +28,7 @@ public class OrderServiceImpl implements OrderService {
     //TODO add Product quantity update after order
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public OrderResponseDTO createOrder(Long userId, OrderCreateRequest request) {
         CartResponseDTO cartResponseDTO;
 
@@ -49,6 +51,18 @@ public class OrderServiceImpl implements OrderService {
                 orderItem.setProductId(cartItem.getProductId());
                 orderItem.setQuantity(cartItem.getQuantity());
                 orderItem.setPrice(cartItem.getPrice());
+
+                try {
+                    restTemplate.put(
+                            productServiceUrl + "/internal/products/quantity/" + orderItem.getProductId() + "/" + orderItem.getQuantity(),
+                            null,
+                            Void.class
+                    );
+                    log.info("Product quantity updated");
+                } catch (Exception ex) {
+                    log.error("Failed to update product quantity", ex);
+                }
+
                 orderItems.add(orderItem);
             }
         }

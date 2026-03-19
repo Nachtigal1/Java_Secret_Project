@@ -9,5 +9,6 @@ public interface UserService {
 
     UserResponseDTO register (UserRegistrationDTO registrationDTO);
     TokenResponse login (UserLoginDTO loginDTO);
+    UserResponseDTO getUserById (Long id);
 
 }

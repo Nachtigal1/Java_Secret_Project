@@ -22,9 +22,12 @@ public class InternalProductController {
         return productService.getQuantityById(id);
     }
 
-    @PatchMapping("/quantity/{id}/{quantity}")
-    public ProductResponseDTO updateQuantityById(@PathVariable Long id, @PathVariable Integer quantity) {
-        return productService.updateProductQuantityById(id, quantity);
+    @PutMapping("/quantity/{id}/{quantity}")
+    public void updateQuantityById(@PathVariable String id, @PathVariable String quantity) {
+        productService.updateProductQuantityById(
+                Long.valueOf(id),
+                Integer.valueOf(quantity)
+        );
     }
 
     @GetMapping("/{id}")

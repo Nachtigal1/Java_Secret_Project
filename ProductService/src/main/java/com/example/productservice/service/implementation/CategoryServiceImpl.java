@@ -2,12 +2,18 @@ package com.example.productservice.service.implementation;
 
 import com.example.productservice.dto.CategoryCreateRequest;
 import com.example.productservice.dto.CategoryResponseDTO;
+import com.example.productservice.dto.ProductResponseDTO;
 import com.example.productservice.exception.CategoryAlreadyExistsException;
+import com.example.productservice.exception.CategoryNotFoundException;
 import com.example.productservice.model.Category;
+import com.example.productservice.model.Product;
 import com.example.productservice.repository.CategoryRepository;
 import com.example.productservice.service.CategoryService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -31,5 +37,27 @@ public class CategoryServiceImpl implements CategoryService {
         categoryResponseDTO.setName(category.getName());
 
         return categoryResponseDTO;
+    }
+
+    @Override
+    public CategoryResponseDTO getCategoryById(Long id) {
+        Category category = categoryRepository.findById(id).orElseThrow(
+                () -> new CategoryNotFoundException("Category with id " + id + " not found")
+        );
+        List<Product> products = category.getProducts();
+        List<ProductResponseDTO> dtos = new ArrayList<>();
+        if (!products.isEmpty()) {
+            for (Product product : products) {
+                ProductResponseDTO dto = new ProductResponseDTO();
+                dto.setId(product.getId());
+                dto.setName(product.getName());
+                dto.setPrice(product.getPrice().toString());
+                dtos.add(dto);
+            }
+        } else {
+            dtos = new ArrayList<>();
+        }
+
+        return new CategoryResponseDTO(category.getId(), category.getName(), dtos);
     }
 }

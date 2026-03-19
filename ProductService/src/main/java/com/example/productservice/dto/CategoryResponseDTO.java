@@ -1,11 +1,14 @@
 package com.example.productservice.dto;
 
-import lombok.Data;
+import lombok.*;
 
 import java.util.ArrayList;
 import java.util.List;
 
-@Data
+@Getter
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
 public class CategoryResponseDTO {
 
     private Long id;

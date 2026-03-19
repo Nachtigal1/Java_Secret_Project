@@ -26,4 +26,11 @@ public class UserController {
     ) {
         return ResponseEntity.status(HttpStatus.OK).body(userService.login(userLoginDTO));
     }
+
+    @GetMapping
+    public ResponseEntity<UserResponseDTO> getUserById (
+            @RequestHeader("X-User") String id
+    ) {
+        return ResponseEntity.status(HttpStatus.OK).body(userService.getUserById(Long.valueOf(id)));
+    }
 }

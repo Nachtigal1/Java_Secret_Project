@@ -62,4 +62,12 @@ public class UserServiceImpl implements UserService {
 
         return new TokenResponse(jwtUtil.generateToken(user.getId().toString()));
     }
+
+    @Override
+    public UserResponseDTO getUserById(Long id) {
+        User user = userRepository.findById(id).orElseThrow(
+                () -> new UserNotFoundException("User with id " + id + " not found")
+        );
+        return new UserResponseDTO(user.getId(), user.getUsername(), user.getRole().toString());
+    }
 }
