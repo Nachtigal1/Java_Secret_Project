@@ -3,7 +3,7 @@
   <component name="CompilerConfiguration">
     <annotationProcessing>
       <profile default="true" name="Default" enabled="true" />
-      <profile name="Annotation profile for OrderService" enabled="true">
+      <profile name="Annotation profile for ApiGateway" enabled="true">
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
@@ -12,8 +12,8 @@
         </processorPath>
         <module name="CartService" />
         <module name="OrderService" />
-        <module name="ProductService" />
         <module name="ApiGateway" />
+        <module name="ProductService" />
         <module name="AuthService" />
       </profile>
     </annotationProcessing>

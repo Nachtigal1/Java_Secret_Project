@@ -2,6 +2,7 @@ package com.example.cartservice.config;
 
 import org.springframework.context.annotation.*;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.web.cors.*;
@@ -20,7 +21,10 @@ public class SecurityConfig {
                         session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(
-                                "/api/carts/**"
+                                "/api/carts/**",
+                                "/v3/api-docs/**",
+                                "/swagger-ui/**",
+                                "/swagger-ui.html"
                         ).permitAll()
                         .requestMatchers(
                                 "/internal/**"
@@ -28,6 +32,15 @@ public class SecurityConfig {
                         .anyRequest().authenticated())
                 .headers(headers -> headers.frameOptions(frame -> frame.disable()));
         return http.build();
+    }
+
+    @Bean
+    public WebSecurityCustomizer webSecurityCustomizer() {
+        return web -> web.ignoring().requestMatchers(
+                "/v3/api-docs/**",
+                "/swagger-ui/**",
+                "/swagger-ui.html"
+        );
     }
 
     @Bean
