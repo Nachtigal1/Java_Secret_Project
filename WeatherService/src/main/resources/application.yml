@@ -1,0 +1,20 @@
+spring:
+  cache:
+    type: caffeine
+    cache-names: weatherCache
+    caffeine:
+      spec: maximumSize=500,expireAfterWrite=15m
+
+resilience4j:
+  circuitbreaker:
+    instances:
+      weatherApi:
+        slidingWindowSize: 10
+        failureRateThreshold: 50
+        waitDurationInOpenState: 10s
+
+  retry:
+    instances:
+      weatherApi:
+        maxAttempts: 3
+        waitDuration: 2s
