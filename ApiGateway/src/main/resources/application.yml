@@ -26,6 +26,11 @@ spring:
           predicates:
             - Path=/api/orders/**
 
+        - id: weather-service
+          uri: ${WEATHER_SERVICE_URL:http://localhost:8085}
+          predicates:
+            - Path=/api/weather/**
+
         # ================= OPENAPI ROUTES =================
         - id: auth-docs
           uri: ${AUTH_SERVICE_URL:http://localhost:8081}
@@ -59,6 +64,13 @@ spring:
             - RewritePath=/orders/v3/api-docs, /v3/api-docs
             - RemoveRequestHeader=Authorization
 
+        - id: weather-service
+          uri: ${WEATHER_SERVICE_URL:http://localhost:8085}
+          predicates:
+            - Path=/weather/v3/api-docs
+          filters:
+            - RewritePath=/weather/v3/api-docs, /v3/api-docs
+            - RemoveRequestHeader=Authorization
 springdoc:
   swagger-ui:
     path: /swagger-ui.html
@@ -73,6 +85,8 @@ springdoc:
         url: /carts/v3/api-docs
       - name: Order Service
         url: /orders/v3/api-docs
+      - name: Weather Service
+        url: /weather/v3/api-docs
 
 jwt:
   secret: 804e6e97692a6de181f9ca67f3525378

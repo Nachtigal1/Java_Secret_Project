@@ -1,10 +1,8 @@
 package com.example.weatherservice.service;
 
+import com.example.weatherservice.dto.SurfWeatherDTO;
 import reactor.core.publisher.Mono;
 
 public interface WeatherService {
-
-    Mono<SurfWeatherDTO> getWeather (Double lat, Double lng);
-
-    Mono<SurfWeatherDTO> fallback (Double lat, Double lng, Throwable ex);
+    Mono<SurfWeatherDTO> getWeather(double lat, double lng);
 }

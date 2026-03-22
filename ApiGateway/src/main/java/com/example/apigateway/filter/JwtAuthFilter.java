@@ -26,6 +26,7 @@ public class JwtAuthFilter implements GlobalFilter {
         if (path.startsWith("/api/auth") ||
                 path.startsWith("/api/products") ||
                 path.startsWith("/internal") ||
+                path.startsWith("/api/weather") ||
                 path.contains("api-docs") ||
                 path.contains("swagger")) {
 

@@ -18,3 +18,9 @@ resilience4j:
       weatherApi:
         maxAttempts: 3
         waitDuration: 2s
+
+
+stormglass:
+  api-key: ${STORMGLAS_API_KEY:c1c2b5d8-25e8-11f1-8cf9-0242ac120003-c1c2b63c-25e8-11f1-8cf9-0242ac120003}
+server:
+  port: 8085
