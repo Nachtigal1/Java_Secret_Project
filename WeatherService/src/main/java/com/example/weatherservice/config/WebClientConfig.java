@@ -1,5 +1,6 @@
 package com.example.weatherservice.config;
 
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.*;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -8,13 +9,28 @@ import org.springframework.web.reactive.function.client.WebClient;
 public class WebClientConfig {
 
     @Value("${stormglass.api-key}")
-    private String apiKey;
+    private String stormglassApiKey;
+
+    @Value("${stormglass.url}")
+    private String stormglassUrl;
+
+    @Value("${openweather.url}")
+    private String openWeatherUrl;
 
     @Bean
-    public WebClient webClient() {
+    @Qualifier("openWeather")
+    public WebClient openWeatherWebClient() {
         return WebClient.builder()
-                .baseUrl("https://api.stormglass.io")
-                .defaultHeader("Authorization", apiKey)
+                .baseUrl(openWeatherUrl)
+                .build();
+    }
+
+    @Bean
+    @Qualifier("stormglass")
+    public WebClient stormglassWebClient() {
+        return WebClient.builder()
+                .baseUrl(stormglassUrl)
+                .defaultHeader("Authorization", stormglassApiKey)
                 .build();
     }
 }
