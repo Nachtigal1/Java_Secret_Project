@@ -6,16 +6,15 @@ services:
     ports:
       - "5432:5432"
     environment:
-      POSTGRES_DB: lab
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
     healthcheck:
       test: [ "CMD-SHELL", "pg_isready -U postgres" ]
       interval: 5s
-      timeout: 5s
       retries: 5
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
 
   api-gateway:
     build: ./ApiGateway
@@ -23,22 +22,67 @@ services:
       - "8080:8080"
     environment:
       AUTH_SERVICE_URL: http://auth-service:8081
+      PRODUCT_SERVICE_URL: http://product-service:8082
+      CART_SERVICE_URL: http://cart-service:8083
+      ORDER_SERVICE_URL: http://order-service:8084
+      WEATHER_SERVICE_URL: http://weather-service:8085
     depends_on:
       - auth-service
+      - product-service
+      - cart-service
+      - order-service
+      - weather-service
 
   auth-service:
     build: ./AuthService
     ports:
       - "8081:8081"
     environment:
-      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/lab
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/auth_db
+      SPRING_JPA_HIBERNATE_DDL_AUTO: update
+      CART_SERVICE_URL: http://cart-service:8083
+    depends_on:
+      - db
 
   product-service:
     build: ./ProductService
     ports:
       - "8082:8082"
     environment:
-      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/lab
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/product_db
+      SPRING_JPA_HIBERNATE_DDL_AUTO: update
+    depends_on:
+      - db
+
+  cart-service:
+    build: ./CartService
+    ports:
+      - "8083:8083"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/cart_db
+      SPRING_JPA_HIBERNATE_DDL_AUTO: update
+      PRODUCT_SERVICE_URL: http://product-service:8082
+    depends_on:
+      - db
+
+  order-service:
+    build: ./OrderService
+    ports:
+      - "8084:8084"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/order_db
+      SPRING_JPA_HIBERNATE_DDL_AUTO: update
+      CART_SERVICE_URL: http://cart-service:8083
+      PRODUCT_SERVICE_URL: http://product-service:8082
+    depends_on:
+      - db
+
+  weather-service:
+    build: ./WeatherService
+    ports:
+      - "8085:8085"
+    environment:
+      STORMGLAS_API_KEY: 8cae8934-25ee-11f1-826e-0242ac120003-8cae89f2-25ee-11f1-826e-0242ac120003
 
 volumes:
   postgres_data:

@@ -5,14 +5,88 @@ spring:
   cloud:
     gateway:
       routes:
+        # ================= API ROUTES =================
         - id: auth-service
           uri: ${AUTH_SERVICE_URL:http://localhost:8081}
           predicates:
             - Path=/api/auth/**
+
         - id: product-service
           uri: ${PRODUCT_SERVICE_URL:http://localhost:8082}
           predicates:
             - Path=/api/products/**
+
+        - id: cart-service
+          uri: ${CART_SERVICE_URL:http://localhost:8083}
+          predicates:
+            - Path=/api/carts/**
+
+        - id: order-service
+          uri: ${ORDER_SERVICE_URL:http://localhost:8084}
+          predicates:
+            - Path=/api/orders/**
+
+        - id: weather-service
+          uri: ${WEATHER_SERVICE_URL:http://localhost:8085}
+          predicates:
+            - Path=/api/weather/**
+
+        # ================= OPENAPI ROUTES =================
+        - id: auth-docs
+          uri: ${AUTH_SERVICE_URL:http://localhost:8081}
+          predicates:
+            - Path=/auth/v3/api-docs
+          filters:
+            - RewritePath=/auth/v3/api-docs, /v3/api-docs
+            - RemoveRequestHeader=Authorization
+
+        - id: product-docs
+          uri: ${PRODUCT_SERVICE_URL:http://localhost:8082}
+          predicates:
+            - Path=/products/v3/api-docs
+          filters:
+            - RewritePath=/products/v3/api-docs, /v3/api-docs
+            - RemoveRequestHeader=Authorization
+
+        - id: cart-docs
+          uri: ${CART_SERVICE_URL:http://localhost:8083}
+          predicates:
+            - Path=/carts/v3/api-docs
+          filters:
+            - RewritePath=/carts/v3/api-docs, /v3/api-docs
+            - RemoveRequestHeader=Authorization
+
+        - id: order-docs
+          uri: ${ORDER_SERVICE_URL:http://localhost:8084}
+          predicates:
+            - Path=/orders/v3/api-docs
+          filters:
+            - RewritePath=/orders/v3/api-docs, /v3/api-docs
+            - RemoveRequestHeader=Authorization
+
+        - id: weather-service
+          uri: ${WEATHER_SERVICE_URL:http://localhost:8085}
+          predicates:
+            - Path=/weather/v3/api-docs
+          filters:
+            - RewritePath=/weather/v3/api-docs, /v3/api-docs
+            - RemoveRequestHeader=Authorization
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html
+    urls:
+      - name: API Gateway
+        url: /v3/api-docs
+      - name: Auth Service
+        url: /auth/v3/api-docs
+      - name: Product Service
+        url: /products/v3/api-docs
+      - name: Cart Service
+        url: /carts/v3/api-docs
+      - name: Order Service
+        url: /orders/v3/api-docs
+      - name: Weather Service
+        url: /weather/v3/api-docs
 
 jwt:
   secret: 804e6e97692a6de181f9ca67f3525378

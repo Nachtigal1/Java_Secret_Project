@@ -12,5 +12,11 @@ public interface ProductService {
 
     List<ProductResponseDTO> getAllProducts ();
 
+    Boolean existsById(Long id);
+
+    Integer getQuantityById(Long id);
+
+    void updateProductQuantityById(Long id, Integer quantity);
+
     void deleteProductById (Long id);
 }

@@ -20,4 +20,14 @@ public class Product {
 
     @Column(name = "price")
     private Double price;
+
+    @Column(name = "quantity")
+    private Integer quantity;
+
+    @Column(name = "image")
+    private String image;
+
+    @ManyToOne
+    @JoinColumn(name = "category_id")
+    private Category category;
 }
