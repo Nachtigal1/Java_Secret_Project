@@ -4,6 +4,9 @@ import com.example.productservice.dto.*;
 import com.example.productservice.service.implementation.ProductServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.*;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -16,9 +19,12 @@ public class ProductController {
     private final ProductServiceImpl productService;
 
     @PostMapping
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ProductResponseDTO> createProduct (
             @RequestBody ProductCreateDTO productCreateDTO
     ) {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        System.out.println(auth);
         return ResponseEntity.status(HttpStatus.CREATED).body(productService.createProduct(productCreateDTO));
     }
 
