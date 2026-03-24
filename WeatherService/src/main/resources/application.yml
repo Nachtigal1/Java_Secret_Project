@@ -21,6 +21,11 @@ resilience4j:
 
 
 stormglass:
+  url: https://api.stormglass.io
   api-key: ${STORMGLAS_API_KEY:c1c2b5d8-25e8-11f1-8cf9-0242ac120003-c1c2b63c-25e8-11f1-8cf9-0242ac120003}
+
+openweather:
+  url: https://api.openweathermap.org
+  api-key: ${OPENWEATHER_API_KEY:b200b025f997945e387b1a669bbab685}
 server:
   port: 8085

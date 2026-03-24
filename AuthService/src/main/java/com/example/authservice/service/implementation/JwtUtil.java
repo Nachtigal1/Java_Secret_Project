@@ -9,6 +9,7 @@ import org.springframework.stereotype.Component;
 import java.nio.charset.StandardCharsets;
 import java.security.Key;
 import java.util.Date;
+import java.util.List;
 
 @Component
 public class JwtUtil implements JwtService {
@@ -24,6 +25,7 @@ public class JwtUtil implements JwtService {
     public String generateToken(String userId) {
         return Jwts.builder()
                 .setSubject(userId)
+                .claim("roles", List.of("ADMIN"))
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + EXPIRATION))
                 .signWith(key)

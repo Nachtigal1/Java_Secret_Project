@@ -83,6 +83,7 @@ services:
       - "8085:8085"
     environment:
       STORMGLAS_API_KEY: 8cae8934-25ee-11f1-826e-0242ac120003-8cae89f2-25ee-11f1-826e-0242ac120003
+      OPENWEATHER_API_KEY: b200b025f997945e387b1a669bbab685
 
 volumes:
   postgres_data:
