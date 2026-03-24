@@ -256,6 +256,8 @@ export default {
         }
 
         this.success = true
+        localStorage.setItem('username', this.form.username)
+        this.$router.push('/shop')
       } catch (e) {
         this.serverError = e.message
         this.triggerShake()
