@@ -24,7 +24,7 @@ public class Product {
     @Column(name = "quantity")
     private Integer quantity;
 
-    @Column(name = "image")
+    @Column(name = "image", columnDefinition = "TEXT")
     private String image;
 
     @ManyToOne

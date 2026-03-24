@@ -1,12 +1,13 @@
 package com.example.productservice.service;
 
 import com.example.productservice.dto.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
 public interface ProductService {
 
-    ProductResponseDTO createProduct (ProductCreateDTO dto);
+    ProductResponseDTO createProduct (String dto, MultipartFile image);
 
     ProductResponseDTO getProductById (Long id);
 

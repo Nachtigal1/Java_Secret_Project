@@ -6,24 +6,38 @@ import com.example.productservice.model.Product;
 import com.example.productservice.repository.CategoryRepository;
 import com.example.productservice.repository.ProductRepository;
 import com.example.productservice.service.ProductService;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Base64;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class ProductServiceImpl implements ProductService {
 
     private final ProductRepository productRepository;
     private final CategoryRepository categoryRepository;
+    private final ObjectMapper objectMapper;
 
     @Override
     @Transactional
-    public ProductResponseDTO createProduct(ProductCreateDTO dto) {
+    public ProductResponseDTO createProduct(String data, MultipartFile image) {
+        ProductCreateDTO dto;
+        try {
+            dto = objectMapper.readValue(data, ProductCreateDTO.class);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException("Failed to parse product data", e);
+        }
         if (productRepository.existsByName(dto.getName())) {
             throw new ProductAlreadyExistsException("Product with name " + dto.getName() + " already exists");
         }
@@ -33,7 +47,12 @@ public class ProductServiceImpl implements ProductService {
         product.setName(dto.getName());
         product.setDescription(dto.getDescription());
         product.setPrice(Double.parseDouble(dto.getPrice()));
-        product.setImage(dto.getImage());
+        try {
+            product.setImage(Base64.getEncoder().encodeToString(image.getBytes()));
+        } catch (IOException e) {
+            log.error("Failed to encode image", e);
+            throw new ImageEncodingException("Failed to encode image");
+        }
         product.setQuantity(100);
         product.setPrice(Double.parseDouble(dto.getPrice()));
         product.setCategory(categoryRepository.findById(dto.getCategoryId()).orElseThrow(

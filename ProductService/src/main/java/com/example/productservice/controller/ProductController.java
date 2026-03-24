@@ -5,9 +5,8 @@ import com.example.productservice.service.implementation.ProductServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.*;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -21,11 +20,10 @@ public class ProductController {
     @PostMapping
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ProductResponseDTO> createProduct (
-            @RequestBody ProductCreateDTO productCreateDTO
+            @RequestPart("data") String productCreateDTO,
+            @RequestPart("file") MultipartFile image
     ) {
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        System.out.println(auth);
-        return ResponseEntity.status(HttpStatus.CREATED).body(productService.createProduct(productCreateDTO));
+        return ResponseEntity.status(HttpStatus.CREATED).body(productService.createProduct(productCreateDTO, image));
     }
 
     @GetMapping
@@ -41,6 +39,7 @@ public class ProductController {
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> deleteProductById (
             @PathVariable Long id
     ) {
