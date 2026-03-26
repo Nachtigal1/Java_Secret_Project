@@ -8,7 +8,8 @@ import com.example.authservice.dto.UserResponseDTO;
 public interface UserService {
 
     UserResponseDTO register (UserRegistrationDTO registrationDTO);
-    TokenResponse login (UserLoginDTO loginDTO);
-    UserResponseDTO getUserById (Long id);
 
+    TokenResponse login (UserLoginDTO loginDTO);
+
+    UserResponseDTO getUserById (Long id);
 }

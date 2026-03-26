@@ -1,7 +1,6 @@
 package com.example.weatherservice.service.implementation;
 
-import com.example.weatherservice.dto.OpenWeatherResponse;
-import com.example.weatherservice.dto.SurfWeatherDTO;
+import com.example.weatherservice.dto.*;
 import com.example.weatherservice.mapper.WeatherMapper;
 import com.example.weatherservice.service.WeatherService;
 import lombok.RequiredArgsConstructor;
@@ -20,7 +19,7 @@ public class OpenWeatherService implements WeatherService {
     private String openWeatherApiKey;
 
     @Override
-    public Mono<SurfWeatherDTO> getWeather(double lat, double lng) {
+    public Mono<WeatherDTO> getWeather(double lat, double lng) {
         return openWeatherWebClient.get()
                 .uri(uriBuilder -> uriBuilder
                         .path("/data/2.5/weather")

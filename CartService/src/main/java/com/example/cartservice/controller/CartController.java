@@ -1,13 +1,9 @@
 package com.example.cartservice.controller;
 
-import com.example.cartservice.dto.CartCreateRequest;
-import com.example.cartservice.dto.CartItemAddRequest;
-import com.example.cartservice.dto.CartResponseDTO;
-import com.example.cartservice.model.Cart;
+import com.example.cartservice.dto.*;
 import com.example.cartservice.service.implementation.CartServiceImpl;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
 
 @RestController

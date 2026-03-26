@@ -6,7 +6,7 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class SurfWeatherDTO {
+public class WeatherDTO {
 
     private double waveHeight;
     private double windSpeed;

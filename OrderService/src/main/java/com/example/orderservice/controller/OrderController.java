@@ -1,11 +1,9 @@
 package com.example.orderservice.controller;
 
-import com.example.orderservice.dto.OrderCreateRequest;
-import com.example.orderservice.dto.OrderResponseDTO;
+import com.example.orderservice.dto.*;
 import com.example.orderservice.service.implementation.OrderServiceImpl;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
 
 @RestController

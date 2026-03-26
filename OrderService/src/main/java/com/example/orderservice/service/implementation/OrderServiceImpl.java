@@ -20,12 +20,11 @@ public class OrderServiceImpl implements OrderService {
 
     private final OrderRepository orderRepository;
     private final RestTemplate restTemplate;
+
     @Value("${cart-service.url}")
     private String cartServiceUrl;
     @Value("${product-service.url}")
     private String productServiceUrl;
-
-    //TODO add Product quantity update after order
 
     @Override
     @Transactional(rollbackFor = Exception.class)

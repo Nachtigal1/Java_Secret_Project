@@ -1,8 +1,7 @@
 package com.example.weatherservice.controller;
 
 import com.example.weatherservice.dto.SurfWeatherDTO;
-import com.example.weatherservice.service.implementation.OpenWeatherService;
-import com.example.weatherservice.service.implementation.StormGlassService;
+import com.example.weatherservice.service.implementation.*;
 import jakarta.validation.constraints.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -20,7 +19,7 @@ public class WeatherController {
     private final OpenWeatherService openWeatherService;
 
     @GetMapping("/stormglass")
-    public Mono<ResponseEntity<SurfWeatherDTO>> getStormGlassWeather(
+    public Mono<ResponseEntity<?>> getStormGlassWeather(
             @RequestParam
             @DecimalMin(value = "-90.0", message = "Latitude must be >= -90")
             @DecimalMax(value = "90.0", message = "Latitude must be <= 90")

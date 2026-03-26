@@ -8,7 +8,7 @@ import java.util.Map;
 @Component
 public class WeatherMapper {
 
-    public SurfWeatherDTO mapStormglassToDto(StormglassResponse response) {
+    public WeatherDTO mapStormglassToDto(StormglassResponse response) {
 
         if (response.getHours() == null || response.getHours().isEmpty()) {
             return emptyDto();
@@ -23,7 +23,7 @@ public class WeatherMapper {
         Double windDeg = extractNullable(hour.getWindDirection());
         String windDirection = mapWindDirection(windDeg);
 
-        return new SurfWeatherDTO(
+        return new WeatherDTO(
                 waveHeight,
                 windSpeed,
                 windDirection,
@@ -31,8 +31,8 @@ public class WeatherMapper {
         );
     }
 
-    public SurfWeatherDTO mapOpenWeatherToDto(OpenWeatherResponse response) {
-        return SurfWeatherDTO.builder()
+    public WeatherDTO mapOpenWeatherToDto(OpenWeatherResponse response) {
+        return WeatherDTO.builder()
                 .temperature(response.getMain().getTemp())
                 .windSpeed(response.getWind().getSpeed())
                 .windDirection(mapWindDirection(response.getWind().getDeg()))
@@ -59,8 +59,8 @@ public class WeatherMapper {
         return data.getOrDefault("noaa", 0.0);
     }
 
-    private SurfWeatherDTO emptyDto() {
-        return new SurfWeatherDTO(
+    private WeatherDTO emptyDto() {
+        return new WeatherDTO(
                 0.0,
                 0.0,
                 "unknown",

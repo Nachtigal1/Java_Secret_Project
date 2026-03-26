@@ -1,19 +1,14 @@
 package com.example.productservice.service.implementation;
 
-import com.example.productservice.dto.CategoryCreateRequest;
-import com.example.productservice.dto.CategoryResponseDTO;
-import com.example.productservice.dto.ProductResponseDTO;
-import com.example.productservice.exception.CategoryAlreadyExistsException;
-import com.example.productservice.exception.CategoryNotFoundException;
-import com.example.productservice.model.Category;
-import com.example.productservice.model.Product;
+import com.example.productservice.dto.*;
+import com.example.productservice.exception.*;
+import com.example.productservice.model.*;
 import com.example.productservice.repository.CategoryRepository;
 import com.example.productservice.service.CategoryService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor

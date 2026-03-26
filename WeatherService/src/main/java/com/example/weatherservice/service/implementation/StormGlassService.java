@@ -21,7 +21,7 @@ public class StormGlassService implements WeatherService {
     @Override
     @CircuitBreaker(name = "weatherApi", fallbackMethod = "fallback")
     @Retry(name = "weatherApi")
-    public Mono<SurfWeatherDTO> getWeather(double lat, double lng) {
+    public Mono<WeatherDTO> getWeather(double lat, double lng) {
 
         return stormglassWebClient.get()
                 .uri(uriBuilder -> uriBuilder
