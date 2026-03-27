@@ -13,12 +13,15 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/products")
 @RequiredArgsConstructor
+@CrossOrigin(origins = "http://localhost:5173")
+
+
 public class ProductController {
 
     private final ProductServiceImpl productService;
 
     @PostMapping
-    @PreAuthorize("hasRole('ADMIN')")
+    //@PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ProductResponseDTO> createProduct (
             @RequestPart("data") String productCreateDTO,
             @RequestPart("file") MultipartFile image
@@ -39,11 +42,11 @@ public class ProductController {
     }
 
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> deleteProductById (
             @PathVariable Long id
     ) {
         productService.deleteProductById(id);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
+
 }
