@@ -18,6 +18,3 @@ product-service:
 
 server:
   port: 8084
-
-jwt:
-  secret: 804e6e97692a6de181f9ca67f3525378

@@ -3,22 +3,18 @@ package com.example.productservice.service.implementation;
 import com.example.productservice.dto.*;
 import com.example.productservice.exception.*;
 import com.example.productservice.model.Product;
-import com.example.productservice.repository.CategoryRepository;
-import com.example.productservice.repository.ProductRepository;
+import com.example.productservice.repository.*;
 import com.example.productservice.service.ProductService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
+import lombok.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Base64;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor

@@ -3,8 +3,7 @@ package com.example.productservice.controller;
 import com.example.productservice.dto.*;
 import com.example.productservice.service.implementation.CategoryServiceImpl;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
