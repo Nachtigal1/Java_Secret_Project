@@ -189,8 +189,8 @@
         <div v-for="product in filteredProducts" :key="product.id" class="product-card"
              @mouseenter="product.hovered = true" @mouseleave="product.hovered = false">
           <div class="product-card__img">
-            <img v-if="product.image" :src="formatImage(product.image)" class="product-card__real-img" :alt="product.name" />
-            <span v-else class="product-card__emoji">📦</span>
+            <img v-if="product.image&& product.image.trim()" :src="formatImage(product.image)" class="product-card__real-img" :alt="product.name" />
+            <span v-else class="product-card__emoji">{{ product.emoji }}</span>
             <div v-if="product.badge" class="product-card__badge-new">{{ product.badge }}</div>
           </div>
           <div class="product-card__body">
@@ -402,7 +402,7 @@ export default {
         const waveHeight = data.waveHeight || this.estimateWave(wind)
         const rating     = this.calcRating(wind, data.temperature, waveHeight)
         return { ...spot, temp: Math.round(data.temperature || 0), wind, waveHeight: (+waveHeight).toFixed(1),
-          rating, icon: this.weatherIcon(wind), condition: this.getCondition(rating), label: this.getLabel(rating) }
+          rating, icon: this.weatherIcon(wind, data.temperature, spot.lat, spot.lng), condition: this.getCondition(rating), label: this.getLabel(rating) }
       })
       this.weatherLoading = false
       this.$nextTick(() => {
@@ -432,9 +432,17 @@ export default {
       if (wind >= 10 && wind <= 35) s += 1
       return Math.min(5, Math.max(1, s))
     },
-    weatherIcon(wind) {
-      if (wind > 50) return '⛈️'; if (wind > 30) return '🌬️'
-      if (wind > 15) return '🌤️'; return '☀️'
+    weatherIcon(wind, temp, lat, lng) {
+      const utcHour = new Date().getUTCHours()
+      const localHour = ((utcHour + Math.round(lng / 15)) + 24) % 24
+      const isNight = localHour < 6 || localHour >= 21
+
+      if (isNight) return '🌙'
+      if (wind > 50) return '⛈️'
+      if (wind > 30) return '🌬️'
+      if (temp < 5)  return '🌨️'
+      if (wind > 15) return '🌤️'
+      return '☀️'
     },
 
 
@@ -443,8 +451,10 @@ export default {
         const res = await fetch(`${API_BASE}/api/products`)
         if (!res.ok) throw new Error(`HTTP ${res.status}`)
         const data = await res.json()
+        const emojiMap = { 'Дошки': '🏄', 'Костюми': '🤿', 'Аксесуари': '⚡' }
         this.products = data.map(p => ({
           id: p.id, name: p.name, desc: p.description, price: p.price, image: p.image,
+          emoji: emojiMap[p.categoryName] || '📦',
           category: p.categoryName,
           tag: ({ 'Дошки': 'boards', 'Костюми': 'wetsuits', 'Аксесуари': 'accessories' })[p.categoryName] || 'all',
           badge: null, hovered: false,
@@ -460,7 +470,7 @@ export default {
       if (this.addingToCart === product.id) return
       this.addingToCart = product.id
       try {
-        const res = await fetch(`http://localhost:8083/api/carts/items`, {
+        const res = await fetch('/api/carts/items', {
           method: 'POST',
           headers: this.authHeaders,  // ← добавь скобки!
           body: JSON.stringify({ productId: product.id, quantity: 1 }),
@@ -565,7 +575,7 @@ export default {
     // ─── UTILS ─────────────────────────────────────────────
 
     formatImage(img) {
-      if (!img) return ''
+      if (!img || img.trim() === '') return ''  // ← додай перевірку
       if (img.startsWith('data:') || img.startsWith('http')) return img
       return `data:image/png;base64,${img.trim()}`
     },
