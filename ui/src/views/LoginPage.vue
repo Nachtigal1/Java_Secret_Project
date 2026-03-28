@@ -1,6 +1,5 @@
 <template>
   <div class="surf-app">
-    <!-- Animated ocean background -->
     <div class="ocean-bg">
       <div class="wave wave-1"></div>
       <div class="wave wave-2"></div>
@@ -10,18 +9,15 @@
       </div>
     </div>
 
-    <!-- Floating surf elements -->
     <div class="surf-deco">
       <div class="board board-1">🏄</div>
       <div class="board board-2">🌊</div>
       <div class="board board-3">☀️</div>
     </div>
 
-    <!-- Login card -->
     <div class="login-wrapper">
-      <div class="card" :class="{ 'card--success': success, 'card--shake': shake }">
+      <div class="card" :class="{ 'card--shake': shake }">
 
-        <!-- Logo -->
         <div class="card__header">
           <div class="logo">
             <span class="logo__wave">〜</span>
@@ -31,85 +27,68 @@
           <p class="card__tagline">Welcome back, surfer 🤙</p>
         </div>
 
-        <!-- Success state -->
-        <transition name="fade">
-          <div v-if="success" class="success-screen">
-            <div class="success-icon">🌊</div>
-            <h2>Добро пожаловать!</h2>
-            <p>Вход выполнен как <strong>{{ form.username }}</strong>.<br>Готов к новой волне?</p>
-            <button class="btn btn--outline" @click="resetForm">Выйти</button>
-          </div>
-        </transition>
+        <form class="form" @submit.prevent="handleSubmit" novalidate>
+          <h2 class="form__title">Увійти в акаунт</h2>
 
-        <!-- Form -->
-        <transition name="fade">
-          <form v-if="!success" class="form" @submit.prevent="handleSubmit" novalidate>
-            <h2 class="form__title">Войти в аккаунт</h2>
-
-            <!-- Username -->
-            <div class="field" :class="{ 'field--error': errors.username, 'field--ok': touched.username && !errors.username }">
-              <label class="field__label" for="username">Имя пользователя</label>
-              <div class="field__input-wrap">
-                <span class="field__icon">🤙</span>
-                <input
-                    id="username"
-                    v-model.trim="form.username"
-                    type="text"
-                    class="field__input"
-                    placeholder="твой никнейм"
-                    autocomplete="username"
-                    @blur="validateField('username')"
-                    @input="clearError('username')"
-                />
-                <span v-if="touched.username && !errors.username" class="field__check">✓</span>
-              </div>
-              <transition name="slide-down">
-                <p v-if="errors.username" class="field__error">{{ errors.username }}</p>
-              </transition>
+          <div class="field" :class="{ 'field--error': errors.username, 'field--ok': touched.username && !errors.username }">
+            <label class="field__label" for="username">Ім'я користувача</label>
+            <div class="field__input-wrap">
+              <span class="field__icon">🤙</span>
+              <input
+                  id="username"
+                  v-model.trim="form.username"
+                  type="text"
+                  class="field__input"
+                  placeholder="твій нікнейм"
+                  autocomplete="username"
+                  @blur="validateField('username')"
+                  @input="clearError('username')"
+              />
+              <span v-if="touched.username && !errors.username" class="field__check">✓</span>
             </div>
-
-            <!-- Password -->
-            <div class="field" :class="{ 'field--error': errors.password, 'field--ok': touched.password && !errors.password }">
-              <label class="field__label" for="password">Пароль</label>
-              <div class="field__input-wrap">
-                <span class="field__icon">🔒</span>
-                <input
-                    id="password"
-                    v-model="form.password"
-                    :type="showPassword ? 'text' : 'password'"
-                    class="field__input"
-                    placeholder="введите пароль"
-                    autocomplete="current-password"
-                    @blur="validateField('password')"
-                    @input="clearError('password')"
-                />
-                <button type="button" class="field__toggle" @click="showPassword = !showPassword" tabindex="-1">
-                  {{ showPassword ? '🙈' : '👁️' }}
-                </button>
-              </div>
-              <transition name="slide-down">
-                <p v-if="errors.password" class="field__error">{{ errors.password }}</p>
-              </transition>
-            </div>
-
-            <!-- Server error -->
             <transition name="slide-down">
-              <div v-if="serverError" class="server-error">⚠️ {{ serverError }}</div>
+              <p v-if="errors.username" class="field__error">{{ errors.username }}</p>
             </transition>
+          </div>
 
-            <!-- Submit -->
-            <button type="submit" class="btn btn--primary" :disabled="loading">
-              <span v-if="!loading">Войти 🌊</span>
-              <span v-else class="loading-dots">
-                <span></span><span></span><span></span>
-              </span>
-            </button>
+          <div class="field" :class="{ 'field--error': errors.password, 'field--ok': touched.password && !errors.password }">
+            <label class="field__label" for="password">Пароль</label>
+            <div class="field__input-wrap">
+              <span class="field__icon">🔒</span>
+              <input
+                  id="password"
+                  v-model="form.password"
+                  :type="showPassword ? 'text' : 'password'"
+                  class="field__input"
+                  placeholder="введіть пароль"
+                  autocomplete="current-password"
+                  @blur="validateField('password')"
+                  @input="clearError('password')"
+              />
+              <button type="button" class="field__toggle" @click="showPassword = !showPassword" tabindex="-1">
+                {{ showPassword ? '🙈' : '👁️' }}
+              </button>
+            </div>
+            <transition name="slide-down">
+              <p v-if="errors.password" class="field__error">{{ errors.password }}</p>
+            </transition>
+          </div>
 
-            <p class="form__footer">
-              Нет аккаунта? <router-link to="/register" class="link">Зарегистрироваться</router-link>
-            </p>
-          </form>
-        </transition>
+          <transition name="slide-down">
+            <div v-if="serverError" class="server-error">⚠️ {{ serverError }}</div>
+          </transition>
+
+          <button type="submit" class="btn btn--primary" :disabled="loading">
+            <span v-if="!loading">Увійти 🌊</span>
+            <span v-else class="loading-dots">
+              <span></span><span></span><span></span>
+            </span>
+          </button>
+
+          <p class="form__footer">
+            Немає акаунту? <router-link to="/register" class="link">Зареєструватись</router-link>
+          </p>
+        </form>
 
       </div>
     </div>
@@ -127,7 +106,6 @@ export default {
       touched: {},
       showPassword: false,
       loading: false,
-      success: false,
       shake: false,
       serverError: '',
     }
@@ -147,14 +125,12 @@ export default {
     validateField(field) {
       this.touched[field] = true
       const { username, password } = this.form
-
       if (field === 'username') {
-        if (!username) this.errors.username = 'Введите имя пользователя'
+        if (!username) this.errors.username = "Введіть ім'я користувача"
         else delete this.errors.username
       }
-
       if (field === 'password') {
-        if (!password) this.errors.password = 'Введите пароль'
+        if (!password) this.errors.password = 'Введіть пароль'
         else delete this.errors.password
       }
     },
@@ -177,7 +153,7 @@ export default {
 
       this.loading = true
       try {
-        const response = await fetch('/api/auth/login', {
+        const loginRes = await fetch('/api/auth/login', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
@@ -186,14 +162,34 @@ export default {
           }),
         })
 
-        if (!response.ok) {
-          const data = await response.json().catch(() => ({}))
-          throw new Error(data.message || 'Неверный логин или пароль.')
+        if (!loginRes.ok) {
+          const errData = await loginRes.json().catch(() => ({}))
+          throw new Error(errData.message || 'Невірний логін або пароль.')
         }
 
-        this.success = true
+        const userData = await loginRes.json()
+        const token = userData.token
+        const payload = JSON.parse(atob(token.split('.')[1]))
+
+        const userId = payload.sub || payload.userId || payload.id || ''
+        const role = payload.roles?.[0] || ''
+
+        localStorage.setItem('token', token)
+        localStorage.setItem('userId', String(userId))
         localStorage.setItem('username', this.form.username)
+        localStorage.setItem('role', role)
+        localStorage.setItem('userRole', role)
+
+        try {
+          await fetch('/api/carts', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ userId, cartItems: [] }),
+          })
+        } catch (e) {}
+
         this.$router.push('/shop')
+
       } catch (e) {
         this.serverError = e.message
         this.triggerShake()
@@ -205,14 +201,6 @@ export default {
     triggerShake() {
       this.shake = true
       setTimeout(() => { this.shake = false }, 600)
-    },
-
-    resetForm() {
-      this.form = { username: '', password: '' }
-      this.errors = {}
-      this.touched = {}
-      this.success = false
-      this.serverError = ''
     },
   },
 }
@@ -261,8 +249,7 @@ export default {
 
 .wave {
   position: absolute;
-  bottom: 0;
-  left: -10%;
+  bottom: 0; left: -10%;
   width: 120%;
   border-radius: 50% 50% 0 0;
   opacity: 0.18;
@@ -294,7 +281,7 @@ export default {
 
 .surf-deco { position: fixed; inset: 0; pointer-events: none; z-index: 1; }
 .board { position: absolute; font-size: 2.4rem; opacity: 0.18; animation: float-drift ease-in-out infinite; }
-.board-1 { top: 12%; left: 5%;  animation-duration: 7s; }
+.board-1 { top: 12%; left: 5%; animation-duration: 7s; }
 .board-2 { top: 65%; right: 8%; animation-duration: 9s; animation-delay: -2s; }
 .board-3 { top: 30%; right: 3%; animation-duration: 6s; animation-delay: -4s; }
 @keyframes float-drift {
@@ -330,9 +317,7 @@ export default {
   to   { opacity: 1; transform: translateY(0) scale(1); }
 }
 
-.card--shake {
-  animation: shake 0.55s cubic-bezier(.36,.07,.19,.97) both;
-}
+.card--shake { animation: shake 0.55s cubic-bezier(.36,.07,.19,.97) both; }
 @keyframes shake {
   10%, 90% { transform: translateX(-3px); }
   20%, 80% { transform: translateX(5px); }
@@ -342,13 +327,7 @@ export default {
 
 .card__header { text-align: center; margin-bottom: 32px; }
 
-.logo {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 10px;
-  margin-bottom: 6px;
-}
+.logo { display: flex; align-items: center; justify-content: center; gap: 10px; margin-bottom: 6px; }
 .logo__text {
   font-family: 'Bebas Neue', sans-serif;
   font-size: 2.6rem;
@@ -356,60 +335,21 @@ export default {
   color: var(--wave-light);
   text-shadow: 0 0 30px rgba(72, 229, 217, 0.5);
 }
-.logo__wave {
-  font-size: 1.6rem;
-  color: var(--wave-cyan);
-  animation: wave-bounce 2s ease-in-out infinite;
-}
+.logo__wave { font-size: 1.6rem; color: var(--wave-cyan); animation: wave-bounce 2s ease-in-out infinite; }
 .logo__wave:last-child { animation-delay: -1s; }
 @keyframes wave-bounce {
   0%, 100% { transform: scaleX(1); }
   50%       { transform: scaleX(1.3); }
 }
 
-.card__tagline {
-  font-size: 0.82rem;
-  letter-spacing: 0.22em;
-  text-transform: uppercase;
-  color: var(--text-muted);
-  font-weight: 300;
-}
+.card__tagline { font-size: 0.82rem; letter-spacing: 0.22em; text-transform: uppercase; color: var(--text-muted); font-weight: 300; }
 
-.form__title {
-  font-family: 'Bebas Neue', sans-serif;
-  font-size: 1.65rem;
-  letter-spacing: 0.08em;
-  color: var(--foam);
-  margin-bottom: 24px;
-}
+.form__title { font-family: 'Bebas Neue', sans-serif; font-size: 1.65rem; letter-spacing: 0.08em; color: var(--foam); margin-bottom: 24px; }
 
 .field { margin-bottom: 18px; }
-
-.field__label {
-  display: block;
-  font-size: 0.77rem;
-  font-weight: 600;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  color: var(--text-muted);
-  margin-bottom: 7px;
-}
-
-.field__input-wrap {
-  position: relative;
-  display: flex;
-  align-items: center;
-}
-
-.field__icon {
-  position: absolute;
-  left: 13px;
-  font-size: 1rem;
-  pointer-events: none;
-  z-index: 1;
-  line-height: 1;
-}
-
+.field__label { display: block; font-size: 0.77rem; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: var(--text-muted); margin-bottom: 7px; }
+.field__input-wrap { position: relative; display: flex; align-items: center; }
+.field__icon { position: absolute; left: 13px; font-size: 1rem; pointer-events: none; z-index: 1; line-height: 1; }
 .field__input {
   width: 100%;
   background: var(--field-bg);
@@ -428,32 +368,12 @@ export default {
   background: rgba(14, 61, 98, 0.85);
   box-shadow: 0 0 0 3px rgba(20, 189, 172, 0.15), 0 0 18px rgba(20, 189, 172, 0.1);
 }
-
 .field--error .field__input { border-color: var(--error); box-shadow: 0 0 0 3px rgba(255, 107, 107, 0.13); }
 .field--ok .field__input { border-color: var(--wave-cyan); }
-
 .field__check { position: absolute; right: 14px; color: var(--wave-cyan); font-size: 1rem; font-weight: 700; }
-
-.field__toggle {
-  position: absolute;
-  right: 12px;
-  background: none;
-  border: none;
-  cursor: pointer;
-  font-size: 1rem;
-  line-height: 1;
-  padding: 2px;
-  opacity: 0.65;
-  transition: opacity 0.2s;
-}
+.field__toggle { position: absolute; right: 12px; background: none; border: none; cursor: pointer; font-size: 1rem; line-height: 1; padding: 2px; opacity: 0.65; transition: opacity 0.2s; }
 .field__toggle:hover { opacity: 1; }
-
-.field__error {
-  font-size: 0.78rem;
-  color: var(--error);
-  margin-top: 5px;
-  padding-left: 4px;
-}
+.field__error { font-size: 0.78rem; color: var(--error); margin-top: 5px; padding-left: 4px; }
 
 .server-error {
   background: rgba(255, 107, 107, 0.12);
@@ -465,42 +385,14 @@ export default {
   margin-bottom: 14px;
 }
 
-.btn {
-  width: 100%;
-  padding: 15px;
-  border-radius: 14px;
-  border: none;
-  font-family: 'Bebas Neue', sans-serif;
-  font-size: 1.15rem;
-  letter-spacing: 0.12em;
-  cursor: pointer;
-  transition: transform 0.18s, box-shadow 0.18s, opacity 0.18s;
-  margin-top: 18px;
-}
-.btn--primary {
-  background: linear-gradient(135deg, var(--wave-cyan) 0%, var(--ocean-teal) 100%);
-  color: var(--ocean-deep);
-  box-shadow: 0 4px 20px rgba(20, 189, 172, 0.35);
-}
+.btn { width: 100%; padding: 15px; border-radius: 14px; border: none; font-family: 'Bebas Neue', sans-serif; font-size: 1.15rem; letter-spacing: 0.12em; cursor: pointer; transition: transform 0.18s, box-shadow 0.18s, opacity 0.18s; margin-top: 18px; }
+.btn--primary { background: linear-gradient(135deg, var(--wave-cyan) 0%, var(--ocean-teal) 100%); color: var(--ocean-deep); box-shadow: 0 4px 20px rgba(20, 189, 172, 0.35); }
 .btn--primary:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 8px 32px rgba(20, 189, 172, 0.5); }
 .btn--primary:active:not(:disabled) { transform: translateY(0); }
 .btn--primary:disabled { opacity: 0.55; cursor: not-allowed; }
 
-.btn--outline {
-  background: transparent;
-  border: 1.5px solid var(--wave-cyan);
-  color: var(--wave-light);
-  margin-top: 12px;
-}
-.btn--outline:hover { background: rgba(20,189,172,0.1); }
-
 .loading-dots { display: flex; align-items: center; justify-content: center; gap: 6px; }
-.loading-dots span {
-  width: 7px; height: 7px;
-  border-radius: 50%;
-  background: var(--ocean-deep);
-  animation: dot-bounce 1.1s ease-in-out infinite;
-}
+.loading-dots span { width: 7px; height: 7px; border-radius: 50%; background: var(--ocean-deep); animation: dot-bounce 1.1s ease-in-out infinite; }
 .loading-dots span:nth-child(2) { animation-delay: 0.18s; }
 .loading-dots span:nth-child(3) { animation-delay: 0.36s; }
 @keyframes dot-bounce {
@@ -509,29 +401,8 @@ export default {
 }
 
 .form__footer { text-align: center; margin-top: 18px; font-size: 0.85rem; color: var(--text-muted); }
-
 .link { color: var(--wave-light); text-decoration: none; border-bottom: 1px solid transparent; transition: border-color 0.2s; }
 .link:hover { border-bottom-color: var(--wave-light); }
-
-.success-screen { text-align: center; padding: 10px 0 8px; }
-.success-icon { font-size: 3.5rem; margin-bottom: 14px; animation: wiggle 0.8s ease-in-out; }
-@keyframes wiggle {
-  0%,100%{ transform: rotate(0deg) scale(1); }
-  25%{ transform: rotate(-12deg) scale(1.15); }
-  75%{ transform: rotate(12deg) scale(1.15); }
-}
-.success-screen h2 {
-  font-family: 'Bebas Neue', sans-serif;
-  font-size: 2rem;
-  letter-spacing: 0.1em;
-  color: var(--wave-light);
-  margin-bottom: 10px;
-}
-.success-screen p { color: var(--text-muted); font-size: 0.92rem; line-height: 1.6; }
-.success-screen strong { color: var(--foam); }
-
-.fade-enter-active, .fade-leave-active { transition: opacity 0.35s, transform 0.35s; }
-.fade-enter-from, .fade-leave-to { opacity: 0; transform: translateY(12px); }
 
 .slide-down-enter-active { transition: all 0.25s ease; }
 .slide-down-leave-active { transition: all 0.2s ease; }

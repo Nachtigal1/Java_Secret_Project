@@ -13,6 +13,14 @@ public class CartController {
 
     private final CartServiceImpl cartService;
 
+    @PostMapping
+    public ResponseEntity<CartResponseDTO> createCart(
+            @RequestBody CartCreateRequest cartCreateRequest
+    ) {
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(cartService.createCart(cartCreateRequest));
+    }
+
     @PostMapping("/items")
     public ResponseEntity<CartResponseDTO> addItem (
             @RequestHeader("X-User") String userId,
@@ -26,5 +34,11 @@ public class CartController {
             @RequestHeader("X-User") String userId
     ) {
         return ResponseEntity.status(HttpStatus.OK).body(cartService.getCart(Long.parseLong(userId)));
+    }
+    @DeleteMapping("/clear")
+    public ResponseEntity<CartResponseDTO> clearCart(
+            @RequestHeader("X-User") String userId
+    ) {
+        return ResponseEntity.ok(cartService.clearCartByUserId(Long.parseLong(userId)));
     }
 }

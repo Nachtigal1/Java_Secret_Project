@@ -42,14 +42,24 @@ public class OrderServiceImpl implements OrderService {
         }
 
         Order order = new Order();
+        order.setUserId(userId);
+        order.setStatus(Order.Status.PENDING);
+        order.setDeliveryMethod(Order.DeliveryMethod.DELIVERY);
+        order.setTotal(0.0);
+        order.setOrderItems(new ArrayList<>());
+
+        Order savedOrder = orderRepository.save(order);
+        log.info("Order saved with id: {}", savedOrder.getId());
+
         List<OrderItem> orderItems = new ArrayList<>();
 
-        if (cartResponseDTO != null) {
+        if (cartResponseDTO != null && cartResponseDTO.getCartItems() != null) {
             for (CartResponseDTO.CartItemResponseDTO cartItem : cartResponseDTO.getCartItems()) {
                 OrderItem orderItem = new OrderItem();
                 orderItem.setProductId(cartItem.getProductId());
                 orderItem.setQuantity(cartItem.getQuantity());
                 orderItem.setPrice(cartItem.getPrice());
+                orderItem.setOrder(savedOrder);
 
                 try {
                     restTemplate.put(
@@ -57,49 +67,38 @@ public class OrderServiceImpl implements OrderService {
                             null,
                             Void.class
                     );
-                    log.info("Product quantity updated");
+                    log.info("Product quantity updated for productId: {}", orderItem.getProductId());
                 } catch (Exception ex) {
-                    log.error("Failed to update product quantity", ex);
+                    log.error("Failed to update product quantity for productId: {}", orderItem.getProductId(), ex);
                 }
 
                 orderItems.add(orderItem);
             }
         }
 
-        order.setOrderItems(orderItems);
-        order.setUserId(userId);
-        order.setStatus(Order.Status.PENDING);
-        order.setDeliveryMethod(Order.DeliveryMethod.DELIVERY);
-        order.setTotal(
-                orderItems.stream()
-                        .mapToDouble(orderItem -> orderItem.getPrice() * orderItem.getQuantity())
-                        .sum()
-        );
+        double total = orderItems.stream()
+                .mapToDouble(i -> i.getPrice() * i.getQuantity())
+                .sum();
 
-        log.info("Order created: {}", order);
+        savedOrder.setOrderItems(orderItems);
+        savedOrder.setTotal(total);
+        orderRepository.save(savedOrder);
+        log.info("Order updated with items, total: {}", total);
 
         try {
-            restTemplate.delete(
-                    cartServiceUrl + "/internal/carts/clear/" + userId
-            );
+            restTemplate.delete(cartServiceUrl + "/internal/carts/clear/" + userId);
             log.info("Cart cleared for user: {}", userId);
         } catch (Exception ex) {
             log.error("Failed to clear cart for user: {}", userId, ex);
         }
 
-        orderRepository.save(order);
-
-        log.info("Order saved: {}", order);
-
-        return getOrderResponseDTO(userId, order);
+        return getOrderResponseDTO(userId, savedOrder);
     }
 
     private static OrderResponseDTO getOrderResponseDTO(Long userId, Order order) {
         OrderResponseDTO orderResponseDTO = new OrderResponseDTO();
-        List<OrderResponseDTO.OrderItemResponseDTO> orderItemResponseDTOList = getOrderItemResponseDTOS(order);
-
         orderResponseDTO.setId(order.getId());
-        orderResponseDTO.setOrderItems(orderItemResponseDTOList);
+        orderResponseDTO.setOrderItems(getOrderItemResponseDTOS(order));
         orderResponseDTO.setUserId(userId);
         orderResponseDTO.setStatus(order.getStatus().name());
         orderResponseDTO.setDeliveryMethod(order.getDeliveryMethod().name());
@@ -108,17 +107,16 @@ public class OrderServiceImpl implements OrderService {
     }
 
     private static List<OrderResponseDTO.OrderItemResponseDTO> getOrderItemResponseDTOS(Order order) {
-        List<OrderResponseDTO.OrderItemResponseDTO> orderItemResponseDTOList = new ArrayList<>();
-
+        List<OrderResponseDTO.OrderItemResponseDTO> list = new ArrayList<>();
         if (order.getOrderItems() != null) {
             for (OrderItem item : order.getOrderItems()) {
-                OrderResponseDTO.OrderItemResponseDTO orderItemResponseDTO = new OrderResponseDTO.OrderItemResponseDTO();
-                orderItemResponseDTO.setProductId(item.getProductId());
-                orderItemResponseDTO.setQuantity(item.getQuantity());
-                orderItemResponseDTO.setPrice(item.getPrice());
-                orderItemResponseDTOList.add(orderItemResponseDTO);
+                OrderResponseDTO.OrderItemResponseDTO dto = new OrderResponseDTO.OrderItemResponseDTO();
+                dto.setProductId(item.getProductId());
+                dto.setQuantity(item.getQuantity());
+                dto.setPrice(item.getPrice());
+                list.add(dto);
             }
         }
-        return orderItemResponseDTOList;
+        return list;
     }
 }

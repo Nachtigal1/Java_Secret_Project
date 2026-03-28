@@ -29,7 +29,7 @@ public class SecurityConfig {
                                 "/swagger-ui/**",
                                 "/swagger-ui.html"
                         ).permitAll()
-                        .anyRequest().authenticated())
+                        .anyRequest().permitAll())
                 .headers(headers -> headers.frameOptions(frame -> frame.disable()));
         return http.build();
     }
